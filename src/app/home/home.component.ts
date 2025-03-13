@@ -5,7 +5,6 @@ import { Tile } from '../models/tile.model';
 import { StorageMap } from '@ngx-pwa/local-storage';
 import { PlayerCountOption } from '../models/player-count-option.model';
 import { MatSelectChange } from '@angular/material/select';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-home',
