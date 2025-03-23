@@ -8,9 +8,9 @@ import { TranslocoHttpLoader } from './transloco-loader';
   providers: [
     provideTransloco({
       config: {
-        availableLangs: ['de'],
-        defaultLang: 'de',
-        fallbackLang: 'de',
+        availableLangs: ['de', 'en'],
+        defaultLang: 'en',
+        fallbackLang: 'en',
         missingHandler: {
           // It will use the first language set in the `fallbackLang` property
           useFallbackTranslation: true,
