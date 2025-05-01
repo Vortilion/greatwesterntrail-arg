@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
     this.storage.get('rar-playerCount').subscribe((playerCount) => {
       playerCount && typeof playerCount === 'number'
         ? this.emitPlayerCount(playerCount)
-        : this.storage.set('rar-playerCount', 2).subscribe(() => {});
+        : this.storage.set('rar-playerCount', 2);
     });
 
     this.applicationConfigService.playerCount.subscribe(
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
   }
 
   onPlayerCountChange(event: MatSelectChange) {
-    this.storage.set('rar-playerCount', event.value).subscribe(() => {});
+    this.storage.set('rar-playerCount', event.value);
     this.emitPlayerCount(event.value);
   }
 
