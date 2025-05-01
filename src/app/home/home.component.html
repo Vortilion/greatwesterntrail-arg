@@ -109,6 +109,24 @@
                   </span>
                 </div>
               </mat-grid-tile>
+              <mat-grid-tile>
+                <mat-grid-tile-header>
+                  <h3>
+                    <span>{{ t("cities-label") }}</span
+                    >:
+                  </h3>
+                </mat-grid-tile-header>
+                <div class="flex flex-wrap">
+                  <span
+                    *ngFor="let randomCity of randomCities"
+                    class="px-2 text-2xl xSmall:text-xl flex-1"
+                  >
+                    <span class="whitespace-nowrap"
+                      >{{ randomCity.title }} {{ randomCity.sides[0].title }}
+                    </span>
+                  </span>
+                </div>
+              </mat-grid-tile>
             </mat-grid-list>
 
             <mat-card>
@@ -144,9 +162,6 @@
                       </li>
                       <li>
                         {{ t("further-steps-step23") }}
-                      </li>
-                      <li>
-                        {{ t("further-steps-step24") }}
                       </li>
                     </ul>
                   </li>

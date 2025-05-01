@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   randomNeutralBuildings!: Tile[];
   randomPlayerBuildings!: Tile[];
   randomStationMasters!: Tile[];
+  randomCities!: Tile[];
   playerCount!: number;
   playerCountList!: PlayerCountOption[];
   isXSmall!: boolean;
@@ -93,5 +94,7 @@ export class HomeComponent implements OnInit {
 
     this.randomPlayerBuildings =
       this.applicationConfigService.getRandomPlayerBuildings();
+
+    this.randomCities = this.applicationConfigService.getRandomCities();
   }
 }

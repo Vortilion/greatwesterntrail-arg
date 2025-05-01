@@ -260,6 +260,42 @@ export class ApplicationConfigService {
     },
   ];
 
+  cities: Tile[] = [
+    {
+      title: 'Le Havre',
+      sides: [
+        {
+          title: 'a',
+        },
+        {
+          title: 'b',
+        },
+      ],
+    },
+    {
+      title: 'Rotterdam',
+      sides: [
+        {
+          title: 'a',
+        },
+        {
+          title: 'b',
+        },
+      ],
+    },
+    {
+      title: 'Liverpool',
+      sides: [
+        {
+          title: 'a',
+        },
+        {
+          title: 'b',
+        },
+      ],
+    },
+  ];
+
   getRandomNeutralBuildingOrder(): Tile[] {
     return this.shuffleArray(this.neutralBuildings);
   }
@@ -286,6 +322,16 @@ export class ApplicationConfigService {
     });
 
     return playerBuildings;
+  }
+
+  getRandomCities(): Tile[] {
+    const cities = JSON.parse(JSON.stringify(this.cities));
+
+    cities.forEach((city: Tile) => {
+      city.sides.splice(Math.floor(Math.random() * city.sides.length), 1);
+    });
+
+    return cities;
   }
 
   private shuffleArray(inArray: Tile[]): Tile[] {
