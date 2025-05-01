@@ -1,9 +1,9 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { ApplicationConfigService } from '../shared/application-config.service';
-import { Tile } from '../models/tile.model';
+import type { Tile } from '../models/tile.model';
 import { StorageMap } from '@ngx-pwa/local-storage';
-import { PlayerCountOption } from '../models/player-count-option.model';
+import type { PlayerCountOption } from '../models/player-count-option.model';
 import { MatSelectChange } from '@angular/material/select';
 
 @Component({
