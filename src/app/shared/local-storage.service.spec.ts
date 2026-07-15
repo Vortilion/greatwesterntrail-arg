@@ -5,6 +5,9 @@ import { LocalStorageService } from './local-storage.service';
 describe('LocalStorageService', () => {
   let service: LocalStorageService;
   let storage: Storage;
+  let originalWindowDescriptor: PropertyDescriptor | undefined;
+  let originalLocalStorageDescriptor: PropertyDescriptor | undefined;
+  let createdWindow = false;
 
   const createStorageMock = (): Storage => {
     const store = new Map<string, string>();
@@ -28,12 +31,20 @@ describe('LocalStorageService', () => {
   };
 
   beforeEach(() => {
+    originalWindowDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+    originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+
     storage = createStorageMock();
-    Object.defineProperty(globalThis, 'window', {
-      value: {},
-      configurable: true,
-      writable: true,
-    });
+
+    if (typeof window === 'undefined') {
+      createdWindow = true;
+      Object.defineProperty(globalThis, 'window', {
+        value: {},
+        configurable: true,
+        writable: true,
+      });
+    }
+
     Object.defineProperty(globalThis, 'localStorage', {
       value: storage,
       configurable: true,
@@ -46,6 +57,21 @@ describe('LocalStorageService', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+
+    if (originalLocalStorageDescriptor) {
+      Object.defineProperty(globalThis, 'localStorage', originalLocalStorageDescriptor);
+    } else {
+      delete (globalThis as { localStorage?: Storage }).localStorage;
+    }
+
+    if (createdWindow) {
+      if (originalWindowDescriptor) {
+        Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+      } else {
+        delete (globalThis as { window?: Window & typeof globalThis }).window;
+      }
+      createdWindow = false;
+    }
   });
 
   it('should create', () => {
