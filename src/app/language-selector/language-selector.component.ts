@@ -1,13 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
-  AvailableLangs,
   TranslocoService,
+  TranslocoPipe,
   getBrowserLang,
 } from '@jsverse/transloco';
+import { MaterialModule } from '../material/material.module';
 
 @Component({
   selector: 'app-language-selector',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MaterialModule, TranslocoPipe],
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
 })

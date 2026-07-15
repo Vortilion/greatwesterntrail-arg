@@ -7,8 +7,14 @@ describe('PageFooterComponent', () => {
   let fixture: ComponentFixture<PageFooterComponent>;
 
   beforeEach(async () => {
+    TestBed.overrideComponent(PageFooterComponent, {
+      set: {
+        template: '',
+      },
+    });
+
     await TestBed.configureTestingModule({
-      declarations: [PageFooterComponent],
+      imports: [PageFooterComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PageFooterComponent);

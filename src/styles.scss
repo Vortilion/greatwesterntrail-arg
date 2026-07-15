@@ -38,11 +38,3 @@ h2,
 h3 {
   margin: 0 0 16px;
 }
-
-p {
-  @apply mb-3;
-}
-
-li > p:last-child {
-  margin: 0;
-}

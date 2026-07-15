@@ -2,13 +2,23 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { ApplicationConfigService } from '../shared/application-config.service';
 import type { Tile } from '../models/tile.model';
-import { StorageMap } from '@ngx-pwa/local-storage';
+import { LocalStorageService } from '../shared/local-storage.service';
 import type { PlayerCountOption } from '../models/player-count-option.model';
 import { MatSelectChange } from '@angular/material/select';
+import { MaterialModule } from '../material/material.module';
+import { PageHeaderComponent } from '../page-header/page-header.component';
+import { PageFooterComponent } from '../page-footer/page-footer.component';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-home',
-  standalone: false,
+  standalone: true,
+  imports: [
+    MaterialModule,
+    PageHeaderComponent,
+    PageFooterComponent,
+    TranslocoDirective,
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -25,7 +35,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private applicationConfigService: ApplicationConfigService,
     private responsive: BreakpointObserver,
-    private storage: StorageMap
+    private storageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
@@ -61,11 +71,12 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.storage.get('rar-playerCount').subscribe((playerCount) => {
-      playerCount && typeof playerCount === 'number'
-        ? this.emitPlayerCount(playerCount)
-        : this.storage.set('rar-playerCount', 2);
-    });
+    const playerCount = this.storageService.getNumber('rar-playerCount');
+    if (playerCount !== null) {
+      this.emitPlayerCount(playerCount);
+    } else {
+      this.storageService.setNumber('rar-playerCount', 2);
+    }
 
     this.applicationConfigService.playerCount.subscribe(
       (playerCount: number) => {
@@ -76,13 +87,14 @@ export class HomeComponent implements OnInit {
     this.randomizeSetup();
   }
 
-  emitPlayerCount(playerCount: any) {
+  emitPlayerCount(playerCount: number) {
     this.applicationConfigService.playerCount.emit(playerCount);
   }
 
   onPlayerCountChange(event: MatSelectChange) {
-    this.storage.set('rar-playerCount', event.value);
-    this.emitPlayerCount(event.value);
+    const playerCount = Number(event.value);
+    this.storageService.setNumber('rar-playerCount', playerCount);
+    this.emitPlayerCount(playerCount);
   }
 
   randomizeSetup() {
