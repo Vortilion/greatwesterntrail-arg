@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
+import { vi } from 'vitest';
 
 import { LanguageSelectorComponent } from './language-selector.component';
 
 const translocoServiceMock = {
     getAvailableLangs: () => ['en', 'de', 'pl'],
     isLang: () => true,
-    setActiveLang: () => {},
+    setActiveLang: vi.fn(),
     getDefaultLang: () => 'en',
     getActiveLang: () => 'en',
 };

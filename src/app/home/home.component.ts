@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ApplicationConfigService } from '../shared/application-config.service';
 import type { Tile } from '../models/tile.model';
 import { LocalStorageService } from '../shared/local-storage.service';
@@ -23,6 +23,10 @@ import { TranslocoDirective } from '@jsverse/transloco';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  private applicationConfigService = inject(ApplicationConfigService);
+  private responsive = inject(BreakpointObserver);
+  private storageService = inject(LocalStorageService);
+
   randomNeutralBuildings!: Tile[];
   randomPlayerBuildings!: Tile[];
   randomStationMasters!: Tile[];
@@ -31,12 +35,6 @@ export class HomeComponent implements OnInit {
   playerCountList!: PlayerCountOption[];
   isXSmall!: boolean;
   isMax1280!: boolean;
-
-  constructor(
-    private applicationConfigService: ApplicationConfigService,
-    private responsive: BreakpointObserver,
-    private storageService: LocalStorageService
-  ) {}
 
   ngOnInit(): void {
     this.playerCount = 2;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   TranslocoService,
   TranslocoPipe,
@@ -15,17 +15,18 @@ import { MaterialModule } from '../material/material.module';
   styleUrls: ['./language-selector.component.scss'],
 })
 export class LanguageSelectorComponent implements OnInit {
-  activeLang: any;
-  availableLangs!: any[];
+  private translocoService = inject(TranslocoService);
 
-  constructor(private translocoService: TranslocoService) {}
+  activeLang!: string;
+  availableLangs!: ReturnType<TranslocoService['getAvailableLangs']>;
+
   ngOnInit(): void {
-    const browserLang: string = `${getBrowserLang()}`;
+    const browserLang = getBrowserLang();
 
     this.availableLangs = this.translocoService.getAvailableLangs();
 
-    if (this.translocoService.isLang(browserLang)) {
-      this.activeLang = getBrowserLang();
+    if (browserLang && this.translocoService.isLang(browserLang)) {
+      this.activeLang = browserLang;
       this.translocoService.setActiveLang(this.activeLang);
     } else {
       this.activeLang = this.translocoService.getDefaultLang();

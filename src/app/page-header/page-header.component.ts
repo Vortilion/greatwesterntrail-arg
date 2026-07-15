@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
 import { MaterialModule } from '../material/material.module';
@@ -17,10 +17,10 @@ import { MaterialModule } from '../material/material.module';
   styleUrls: ['./page-header.component.scss'],
 })
 export class PageHeaderComponent implements OnInit {
+  private responsive = inject(BreakpointObserver);
+
   @Input() sidebarHandle!: MatSidenav;
   isXSmall!: boolean;
-
-  constructor(private responsive: BreakpointObserver) {}
 
   ngOnInit(): void {
     this.responsive.observe(Breakpoints.XSmall).subscribe((result) => {

@@ -106,12 +106,11 @@ describe('TranslocoHttpLoader', () => {
     it('should handle HTTP errors gracefully', () => {
       let errorReceived = false;
 
-      service.getTranslation('invalid').subscribe(
-        () => {},
-        () => {
+      service.getTranslation('invalid').subscribe({
+        error: () => {
           errorReceived = true;
         },
-      );
+      });
 
       const req = httpMock.expectOne('i18n/invalid.json');
       req.error(new ErrorEvent('Network error'));
