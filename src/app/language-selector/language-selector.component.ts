@@ -1,40 +1,47 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import {
+  TranslocoModule,
   TranslocoService,
-  TranslocoPipe,
   getBrowserLang,
 } from '@jsverse/transloco';
-import { MaterialModule } from '../material/material.module';
 
 @Component({
   selector: 'app-language-selector',
   standalone: true,
-  imports: [CommonModule, MaterialModule, TranslocoPipe],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    TranslocoModule,
+  ],
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
 })
 export class LanguageSelectorComponent implements OnInit {
+  activeLang!: string;
+  availableLangs!: string[];
   private translocoService = inject(TranslocoService);
 
-  activeLang!: string;
-  availableLangs!: ReturnType<TranslocoService['getAvailableLangs']>;
-
   ngOnInit(): void {
-    const browserLang = getBrowserLang();
+    const browserLang = `${getBrowserLang()}`;
 
-    this.availableLangs = this.translocoService.getAvailableLangs();
+    this.availableLangs = this.translocoService.getAvailableLangs() as string[];
 
-    if (browserLang && this.translocoService.isLang(browserLang)) {
-      this.activeLang = browserLang;
+    if (this.translocoService.isLang(browserLang)) {
+      this.activeLang = getBrowserLang()!;
       this.translocoService.setActiveLang(this.activeLang);
     } else {
-      this.activeLang = this.translocoService.getDefaultLang();
+      this.activeLang = this.translocoService.getDefaultLang()!;
     }
   }
 
   changeLanguage(lang: string): void {
     this.translocoService.setActiveLang(lang);
-    this.activeLang = this.translocoService.getActiveLang();
+    this.activeLang = this.translocoService.getActiveLang()!;
   }
 }

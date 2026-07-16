@@ -1,26 +1,23 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { MatSidenav } from '@angular/material/sidenav';
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenav } from '@angular/material/sidenav';
+import { TranslocoModule } from '@jsverse/transloco';
 import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
-import { MaterialModule } from '../material/material.module';
 
 @Component({
   selector: 'app-page-header',
   standalone: true,
-  imports: [
-    MaterialModule,
-    LanguageSelectorComponent,
-    TranslocoPipe,
-  ],
+  imports: [CommonModule, MatToolbarModule, MatIconModule, TranslocoModule, LanguageSelectorComponent],
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
 })
 export class PageHeaderComponent implements OnInit {
-  private responsive = inject(BreakpointObserver);
-
   @Input() sidebarHandle!: MatSidenav;
   isXSmall!: boolean;
+  private responsive = inject(BreakpointObserver);
 
   ngOnInit(): void {
     this.responsive.observe(Breakpoints.XSmall).subscribe((result) => {

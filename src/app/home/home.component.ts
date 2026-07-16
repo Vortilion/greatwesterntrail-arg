@@ -1,23 +1,42 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSelectModule, MatSelectChange } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import {
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
 import { ApplicationConfigService } from '../shared/application-config.service';
-import type { Tile } from '../models/tile.model';
+import { Tile } from '../models/tile.model';
 import { LocalStorageService } from '../shared/local-storage.service';
-import type { PlayerCountOption } from '../models/player-count-option.model';
-import { MatSelectChange } from '@angular/material/select';
-import { MaterialModule } from '../material/material.module';
+import { PlayerCountOption } from '../models/player-count-option.model';
 import { PageHeaderComponent } from '../page-header/page-header.component';
 import { PageFooterComponent } from '../page-footer/page-footer.component';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    MaterialModule,
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatGridListModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSlideToggleModule,
+    TranslocoModule,
     PageHeaderComponent,
     PageFooterComponent,
-    TranslocoDirective,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
