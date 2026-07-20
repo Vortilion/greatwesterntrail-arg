@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionDetectedEvent } from '@angular/service-worker';
@@ -14,35 +15,42 @@ import { filter } from 'rxjs';
 })
 export class App implements OnInit {
   title = 'gwt-arg_randomizer';
+  private destroyRef = inject(DestroyRef);
   private swUpdate = inject(SwUpdate);
   private snackbar = inject(MatSnackBar);
   private translocoService = inject(TranslocoService);
 
   ngOnInit(): void {
-    this.swUpdate.unrecoverable.subscribe((event) => {
-      const snackError = this.snackbar.open(
-        'An error occurred that we cannot recover from:\n' +
-          event.reason +
-          '\n\nPlease reload the page.',
-        'Reload',
-      );
+    this.swUpdate.unrecoverable
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        const snackError = this.snackbar.open(
+          'An error occurred that we cannot recover from:\n' +
+            event.reason +
+            '\n\nPlease reload the page.',
+          'Reload',
+        );
 
-      snackError.onAction().subscribe(() => {
-        window.location.reload();
+        snackError
+          .onAction()
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => {
+            window.location.reload();
+          });
+
+        console.debug(
+          'An error occurred that we cannot recover from:\n' +
+            event.reason +
+            '\n\nPlease reload the page.',
+        );
       });
-
-      console.debug(
-        'An error occurred that we cannot recover from:\n' +
-          event.reason +
-          '\n\nPlease reload the page.',
-      );
-    });
 
     this.swUpdate.versionUpdates
       .pipe(
         filter(
           (evt): evt is VersionDetectedEvent => evt.type === 'VERSION_DETECTED',
         ),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         const snack = this.snackbar.open(
@@ -50,9 +58,12 @@ export class App implements OnInit {
           'Reload',
         );
 
-        snack.onAction().subscribe(() => {
-          window.location.reload();
-        });
+        snack
+          .onAction()
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => {
+            window.location.reload();
+          });
       });
   }
 }

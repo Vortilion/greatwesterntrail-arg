@@ -1,12 +1,13 @@
+import { computed } from '@angular/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ApplicationConfigService } from './application-config.service';
+import { GwtArgConfigService } from './gwt-arg-config.service';
 
-describe('ApplicationConfigService', () => {
-  let service: ApplicationConfigService;
+describe('GwtArgConfigService', () => {
+  let service: GwtArgConfigService;
 
   beforeEach(() => {
-    service = new ApplicationConfigService();
+    service = new GwtArgConfigService();
   });
 
   afterEach(() => {
@@ -18,27 +19,23 @@ describe('ApplicationConfigService', () => {
   });
 
   describe('playerCount', () => {
-    it('should emit player counts', () => {
-      let emitted: number | null = null;
-
-      service.playerCount.subscribe((value) => {
-        emitted = value;
-      });
-
-      service.playerCount.emit(3);
-
-      expect(emitted).toBe(3);
+    it('should initialize with a default player count', () => {
+      expect(service.playerCount()).toBe(2);
     });
 
-    it('should notify multiple player count subscribers', () => {
-      const emitted: number[] = [];
+    it('should update player count signal value', () => {
+      service.setPlayerCount(3);
 
-      service.playerCount.subscribe((value) => emitted.push(value));
-      service.playerCount.subscribe((value) => emitted.push(value * 10));
+      expect(service.playerCount()).toBe(3);
+    });
 
-      service.playerCount.emit(2);
+    it('should update dependent computed signals when player count changes', () => {
+      const playerCountTimesTen = computed(() => service.playerCount() * 10);
 
-      expect(emitted).toEqual([2, 20]);
+      expect(playerCountTimesTen()).toBe(20);
+      service.setPlayerCount(4);
+
+      expect(playerCountTimesTen()).toBe(40);
     });
   });
 

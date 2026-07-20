@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SwUpdate } from '@angular/service-worker';
 import { provideTransloco } from '@jsverse/transloco';
+import { of } from 'rxjs';
 import { App } from './app';
 
 describe('App', () => {
@@ -20,14 +21,14 @@ describe('App', () => {
         {
           provide: SwUpdate,
           useValue: {
-            unrecoverable: { subscribe: () => void 0 },
+            unrecoverable: of({ reason: 'test reason' }),
             versionUpdates: { pipe: () => ({ subscribe: () => void 0 }) },
           },
         },
         {
           provide: MatSnackBar,
           useValue: {
-            open: () => ({ onAction: () => ({ subscribe: () => void 0 }) }),
+            open: () => ({ onAction: () => of(void 0) }),
           },
         },
       ],

@@ -1,11 +1,12 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Tile } from '../models/tile.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ApplicationConfigService {
-  playerCount = new EventEmitter<number>();
+export class GwtArgConfigService {
+  private readonly _playerCount = signal<number>(2);
+  readonly playerCount = this._playerCount.asReadonly();
   neutralBuildings: Tile[] = [
     {
       title: 'A',
@@ -295,6 +296,10 @@ export class ApplicationConfigService {
       ],
     },
   ];
+
+  setPlayerCount(playerCount: number): void {
+    this._playerCount.set(playerCount);
+  }
 
   getRandomNeutralBuildingOrder(): Tile[] {
     return this.shuffleArray(this.neutralBuildings);

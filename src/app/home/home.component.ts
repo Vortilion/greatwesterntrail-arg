@@ -1,6 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,13 +13,14 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
-import { ApplicationConfigService } from '../shared/application-config.service';
+import { GwtArgConfigService } from '../shared/gwt-arg-config.service';
 import { Tile } from '../models/tile.model';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { PlayerCountOption } from '../models/player-count-option.model';
 import { PageHeaderComponent } from '../page-header/page-header.component';
 import { PageFooterComponent } from '../page-footer/page-footer.component';
 import { TranslocoModule } from '@jsverse/transloco';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -41,89 +43,76 @@ import { TranslocoModule } from '@jsverse/transloco';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  private applicationConfigService = inject(ApplicationConfigService);
+export class HomeComponent {
+  private applicationConfigService = inject(GwtArgConfigService);
   private responsive = inject(BreakpointObserver);
   private storageService = inject(LocalStorageService);
 
-  randomNeutralBuildings!: Tile[];
-  randomPlayerBuildings!: Tile[];
-  randomStationMasters!: Tile[];
-  randomCities!: Tile[];
-  playerCount!: number;
-  playerCountList!: PlayerCountOption[];
-  isXSmall!: boolean;
-  isMax1280!: boolean;
+  readonly playerCount = this.applicationConfigService.playerCount;
+  readonly playerCountList: PlayerCountOption[] = [
+    {
+      label: '2',
+      value: 2,
+    },
+    {
+      label: '3',
+      value: 3,
+    },
+    {
+      label: '4',
+      value: 4,
+    },
+  ];
 
-  ngOnInit(): void {
-    this.playerCount = 2;
-    this.playerCountList = [
-      {
-        label: '2',
-        value: 2,
-      },
-      {
-        label: '3',
-        value: 3,
-      },
-      {
-        label: '4',
-        value: 4,
-      },
-    ];
+  readonly isXSmall = toSignal(
+    this.responsive
+      .observe(Breakpoints.XSmall)
+      .pipe(map((result) => result.matches)),
+    { initialValue: false },
+  );
+  readonly isMax1280 = toSignal(
+    this.responsive
+      .observe('(max-width: 1280px)')
+      .pipe(map((result) => result.matches)),
+    { initialValue: false },
+  );
 
-    this.responsive.observe(Breakpoints.XSmall).subscribe((result) => {
-      if (result.matches) {
-        this.isXSmall = true;
-      } else {
-        this.isXSmall = false;
-      }
-    });
+  readonly randomNeutralBuildings = signal<Tile[]>([]);
+  readonly randomPlayerBuildings = signal<Tile[]>([]);
+  readonly randomStationMasters = signal<Tile[]>([]);
+  readonly randomCities = signal<Tile[]>([]);
 
-    this.responsive.observe('(max-width: 1280px)').subscribe((result) => {
-      if (result.matches) {
-        this.isMax1280 = true;
-      } else {
-        this.isMax1280 = false;
-      }
-    });
-
+  constructor() {
     const playerCount = this.storageService.getNumber('rar-playerCount');
     if (playerCount !== null) {
-      this.emitPlayerCount(playerCount);
+      this.updatePlayerCount(playerCount);
     } else {
       this.storageService.setNumber('rar-playerCount', 2);
     }
 
-    this.applicationConfigService.playerCount.subscribe(
-      (playerCount: number) => {
-        this.playerCount = playerCount;
-      }
-    );
-
     this.randomizeSetup();
   }
 
-  emitPlayerCount(playerCount: number) {
-    this.applicationConfigService.playerCount.emit(playerCount);
+  updatePlayerCount(playerCount: number): void {
+    this.applicationConfigService.setPlayerCount(playerCount);
   }
 
-  onPlayerCountChange(event: MatSelectChange) {
+  onPlayerCountChange(event: MatSelectChange): void {
     const playerCount = Number(event.value);
     this.storageService.setNumber('rar-playerCount', playerCount);
-    this.emitPlayerCount(playerCount);
+    this.updatePlayerCount(playerCount);
   }
 
-  randomizeSetup() {
-    this.randomNeutralBuildings =
-      this.applicationConfigService.getRandomNeutralBuildingOrder();
-
-    this.randomStationMasters =
-      this.applicationConfigService.getRandomStationMasters();
-
-    this.randomPlayerBuildings =
-      this.applicationConfigService.getRandomPlayerBuildings();
-
-    this.randomCities = this.applicationConfigService.getRandomCities();
+  randomizeSetup(): void {
+    this.randomNeutralBuildings.set(
+      this.applicationConfigService.getRandomNeutralBuildingOrder(),
+    );
+    this.randomStationMasters.set(
+      this.applicationConfigService.getRandomStationMasters(),
+    );
+    this.randomPlayerBuildings.set(
+      this.applicationConfigService.getRandomPlayerBuildings(),
+    );
+    this.randomCities.set(this.applicationConfigService.getRandomCities());
   }
 }
